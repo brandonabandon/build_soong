@@ -51,6 +51,9 @@ func init() {
 
 		ctx.BottomUp("coverage", coverageLinkingMutator).Parallel()
 		ctx.TopDown("vndk_deps", sabiDepsMutator)
+
+		ctx.TopDown("lto_deps", ltoDepsMutator)
+		ctx.BottomUp("lto", ltoMutator).Parallel()
 	})
 
 	pctx.Import("android/soong/cc/config")
@@ -295,6 +298,7 @@ type Module struct {
 	coverage  *coverage
 	sabi      *sabi
 	vndkdep   *vndkdep
+	lto       *lto
 
 	androidMkSharedLibDeps []string
 
@@ -333,6 +337,9 @@ func (c *Module) Init() android.Module {
 	}
 	if c.vndkdep != nil {
 		c.AddProperties(c.vndkdep.props()...)
+	}
+	if c.lto != nil {
+		c.AddProperties(c.lto.props()...)
 	}
 	for _, feature := range c.features {
 		c.AddProperties(feature.props()...)
@@ -619,6 +626,8 @@ func (c *Module) begin(ctx BaseModuleContext) {
 	}
 	if c.vndkdep != nil {
 		c.vndkdep.begin(ctx)
+	if c.lto != nil {
+		c.lto.begin(ctx)
 	}
 	for _, feature := range c.features {
 		feature.begin(ctx)
@@ -655,6 +664,8 @@ func (c *Module) deps(ctx DepsContext) Deps {
 	}
 	if c.vndkdep != nil {
 		deps = c.vndkdep.deps(ctx, deps)
+	if c.lto != nil {
+		deps = c.lto.deps(ctx, deps)
 	}
 	for _, feature := range c.features {
 		deps = feature.deps(ctx, deps)
@@ -1191,6 +1202,7 @@ func DefaultsFactory(props ...interface{}) android.Module {
 		&CoverageProperties{},
 		&SAbiProperties{},
 		&VndkProperties{},
+		&LTOProperties{},
 	)
 
 	android.InitDefaultsModule(module)
