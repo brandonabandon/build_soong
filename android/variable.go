@@ -19,7 +19,8 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
-	"extras/soong/android"
+
+	"extras/soong/screwd"
 
 	"github.com/google/blueprint/proptools"
 )
@@ -68,18 +69,6 @@ type variableProperties struct {
 			Cflags []string
 		}
 
-		Has_legacy_camera_hal1 struct {
-			Cflags []string
-		}
-
-		Needs_text_relocations struct {
-			Cppflags []string
-		}
-
-		Uses_media_extensions struct {
-			Cflags []string
-		}
-
 		// treble is true when a build is a Treble compliant device.  This is automatically set when
 		// a build is shipped with Android O, but can be overriden.  This controls such things as
 		// the sepolicy split and enabling the Treble linker namespaces.
@@ -107,8 +96,10 @@ type variableProperties struct {
 		Pdk struct {
 			Enabled *bool
 		}
-		*android.Product_variables
 
+ 		// include Screwd variables
+		Screwd screwd.Product_variables
+		Qualcomm screwd.Product_variables
 	} `android:"arch_variant"`
 }
 
@@ -153,11 +144,8 @@ type productVariables struct {
 	Eng                        *bool `json:",omitempty"`
 	EnableCFI                  *bool `json:",omitempty"`
 	Device_uses_hwc2           *bool `json:",omitempty"`
-	Has_legacy_camera_hal1     *bool `json:",omitempty"`
-	Needs_text_relocations     *bool `json:",omitempty"`
 	Treble                     *bool `json:",omitempty"`
 	Pdk                        *bool `json:",omitempty"`
-	Uses_media_extensions      *bool `json:",omitempty"`
 
 	IntegerOverflowExcludePaths *[]string `json:",omitempty"`
 
@@ -186,12 +174,9 @@ type productVariables struct {
 
 	DeviceKernelHeaders []string `json:",omitempty"`
 
-	*android.ProductVariables
-
-	BoardUsesQTIHardware *bool `json:",omitempty"`
-
-	BoardUsesQCOMHardware *bool `json:",omitempty"`
-	TargetUsesQCOMBsp *bool `json:",omitempty"`
+ 	// include Screwd variables
+	Screwd screwd.ProductVariables
+	Qualcomm screwd.ProductVariables
 }
 
 func boolPtr(v bool) *bool {
@@ -223,7 +208,6 @@ func (v *productVariables) SetDefaultConfig() {
 		DeviceSecondaryAbi:         &[]string{"armeabi-v7a"},
 		Malloc_not_svelte:          boolPtr(false),
 		Safestack:                  boolPtr(false),
-		BoardUsesQTIHardware:      boolPtr(false),
 	}
 
 	if runtime.GOOS == "linux" {
