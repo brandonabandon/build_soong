@@ -524,7 +524,7 @@ func (c *deviceConfig) DeviceKernelHeaderDirs() []string {
 }
 
 func (c *deviceConfig) SpecificCameraParametersLibrary() string {
-	return String(c.config.ProductVariables.Aosp.Specific_camera_parameter_library)
+	return String(c.config.ProductVariables.Screwd.Specific_camera_parameter_library)
 }
 
 func (c *deviceConfig) NativeCoverageEnabled() bool {
@@ -551,16 +551,4 @@ func (c *config) IntegerOverflowDisabledForPath(path string) bool {
 		return false
 	}
 	return prefixInList(path, *c.ProductVariables.IntegerOverflowExcludePaths)
-}
-
-func (c *deviceConfig) BoardUsesQTIHardware() bool {
-	return Bool(c.config.ProductVariables.BoardUsesQTIHardware)
-}
-
-func (c *deviceConfig) BoardUsesQCOMHardware() bool {
-	return Bool(c.config.ProductVariables.BoardUsesQCOMHardware)
-}
-
-func (c *deviceConfig) TargetUsesQCOMBsp() bool {
-	return Bool(c.config.ProductVariables.TargetUsesQCOMBsp)
 }

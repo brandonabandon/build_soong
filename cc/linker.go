@@ -129,10 +129,6 @@ func (linker *baseLinker) linkerProps() []interface{} {
 }
 
 func (linker *baseLinker) linkerDeps(ctx BaseModuleContext, deps Deps) Deps {
-	// check if the device uses QTI chipset
-	if (!ctx.DeviceConfig().BoardUsesQTIHardware()) {
-		linker.Properties.Qti_whole_static_libs = nil
-	}
 	deps.WholeStaticLibs = append(deps.WholeStaticLibs, linker.Properties.Whole_static_libs...)
 	deps.WholeStaticLibs = append(deps.WholeStaticLibs, linker.Properties.Qti_whole_static_libs...)
 	deps.HeaderLibs = append(deps.HeaderLibs, linker.Properties.Header_libs...)
